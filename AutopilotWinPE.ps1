@@ -1,7 +1,25 @@
 ##This script will check if the device is in Autopilot. If it is, it will print the group tag of the device.
 ## It will then proceed to remove the Intune record if required, then install Windows & drivers
- 
- 
+
+$yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes","Upload the device's hash to AutoPilot. (Device is not in Autopilot devices)"
+$no = New-Object System.Management.Automation.Host.ChoiceDescription "&No","Skip Autopilot hash upload and just reinstall Windows. (Device is already in Autopilot devices)"
+$options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
+
+$title = "Autopilot Hash upload" 
+$message = "Do you want to upload this device's hash to Autopilot?"
+$result = $host.ui.PromptForChoice($title, $message, $options, 1)
+switch ($result) {
+  0{
+    #Answer Yes
+    Write-Host "OSDCloud build automation with Autopilot enrolment" -ForegroundColor Cyan
+    MgGraph-Authentication
+  }1{
+    #Answer No
+    Write-Host "OSDCloud build automation - Windows reinstall only." -ForegroundColor Cyan
+    Start-OSD
+    }
+}
+
 function MgGraph-Authentication {
  
     ## Credetnails required to auth ##
@@ -22,9 +40,7 @@ function MgGraph-Authentication {
     } catch {
         Write-Host "Error connecting to graph: $_." -ForegroundColor Red
         Read-Host -Prompt "Press Enter to exit"
- 
     }
- 
 }
  
 function downloadPreReqs {
@@ -35,9 +51,9 @@ function downloadPreReqs {
     Write-Host "Downloading Pre-reqs..." -ForegroundColor Cyan
     Invoke-WebRequest https://raw.githubusercontent.com/harris-bowman/IntuneTesting/refs/heads/main/Create_4kHash_using_OA3_Tool.ps1 -OutFile X:\Autopilot\Create_4kHash_using_OA3_Tool.ps1
     Invoke-WebRequest https://raw.githubusercontent.com/harris-bowman/IntuneTesting/refs/heads/main/OA3.cfg -OutFile X:\Autopilot\OA3.cfg
-    Invoke-WebRequest https://github.com/harris-bowman/IntuneTesting/blob/main/PCPKsp.dll -OutFile X:\Autopilot\PCPKsp.dll
+    Invoke-WebRequest https://raw.githubusercontent.com/harris-bowman/IntuneTesting/refs/heads/main/PCPKsp.dll -OutFile X:\Autopilot\PCPKsp.dll
     Invoke-WebRequest https://raw.githubusercontent.com/harris-bowman/IntuneTesting/refs/heads/main/input.xml -OutFile X:\Autopilot\input.xml
-    Invoke-WebRequest https://github.com/harris-bowman/IntuneTesting/raw/refs/heads/main/oa3tool.exe -OutFile X:\Autopilot\oa3tool.exe
+    Invoke-WebRequest https://raw.githubusercontent.com/harris-bowman/IntuneTesting/refs/heads/main/oa3tool.exe -OutFile X:\Autopilot\oa3tool.exe
     Write-Host "Pre-reqs downloaded!" -ForegroundColor Green
  
     AutopilotDeviceEnrolmentCheck
@@ -118,16 +134,16 @@ function Start-AutopilotEnrolment {
  
     Write-Host "Welcome to Autopilot Enrolment" -ForegroundColor Cyan
    
-    $GroupTag = Read-Host "Please enter your GroupTag (Case Sensitive)"
+    $GroupTag = "SmarT User"
    
     $OutputFile = "X:\Autopilot\$SerialNumber.CSV"
    
     X:\Autopilot\Create_4kHash_using_OA3_Tool.ps1 -GroupTag $GroupTag -OutputFile $OutputFile
     Write-Host "Creation of Autopilot CSV file succeeded!" -ForegroundColor Green
     Write-Host "Starting Upload to Intune now via MS Graph." -ForegroundColor Cyan
-    Sleep -Seconds 10
+    Start-Sleep -Seconds 10
     Start-AutopilotGraphUpload
-    Sleep -Seconds 10
+    Start-Sleep -Seconds 10
     }
  
     function Start-AutopilotGraphUpload {
@@ -138,7 +154,6 @@ function Start-AutopilotEnrolment {
         param (
             [string]$CsvPath
         )
- 
         try {
             $csvData = Import-Csv -Path $CsvPath -Encoding UTF8
             $deviceList = @()
@@ -242,5 +257,4 @@ function Start-OSD {
 }
  
  
-Write-Host "OSDCloud build automation with Autopilot enrolment" -ForegroundColor Cyan
-MgGraph-Authentication
+
