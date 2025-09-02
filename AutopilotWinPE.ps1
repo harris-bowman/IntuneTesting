@@ -238,11 +238,10 @@ function Start-OSD {
     wpeutil shutdown
 }
  
-$answer = Read-Host("Enter the word 'skip' to skip uploading the device's hash to Windows Autopilot and to instantly start rebuilding the device. Otherwise, press enter.")
+$answer = Read-Host("Enter the word 'skip' to skip uploading the device's hash 
+to Windows Autopilot and to instantly start rebuilding the device. 
+Otherwise, press enter.")
 if ($answer = "skip") {
-    Write-Host "OSDCloud build automation - Windows reinstall only." -ForegroundColor Cyan
-    Start-OSD
-} elseif ($answer = "Skip") {
     Write-Host "OSDCloud build automation - Windows reinstall only." -ForegroundColor Cyan
     Start-OSD
 } else {
