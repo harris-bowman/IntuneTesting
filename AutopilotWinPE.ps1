@@ -13,7 +13,6 @@ function MgGraph-Authentication {
         Write-Host "#######################################################################`n" -ForegroundColor Green
         
         Set-ExecutionPolicy RemoteSigned -Force
-        Install-Module PowershellGet -Force -SkipPublisherCheck
         Install-Module Microsoft.Graph -Force -SkipPublisherCheck
         Connect-MgGraph -UseDeviceCode -NoWelcome
         Write-Host "Connected successfuly" -ForegroundColor Green
@@ -235,7 +234,8 @@ function Start-OSD {
  
     Write-Host "Shutting down in 3 seconds!" -ForegroundColor Cyan
     Start-Sleep -Seconds 3
-    wpeutil shutdown
+    #wpeutil shutdown
+    shutdown.exe -r -t 0
 }
  
 $SkipAnswerInput = Read-Host("Enter the word 'skip' to skip uploading the device's hash to Windows Autopilot and to instantly start rebuilding the device. Otherwise, press enter.")
