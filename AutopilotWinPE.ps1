@@ -1,24 +1,6 @@
 ##This script will check if the device is in Autopilot. If it is, it will print the group tag of the device.
 ## It will then proceed to remove the Intune record if required, then install Windows & drivers
 
-$yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes","Upload the device's hash to AutoPilot. (Device is not in Autopilot devices)"
-$no = New-Object System.Management.Automation.Host.ChoiceDescription "&No","Skip Autopilot hash upload and just reinstall Windows. (Device is already in Autopilot devices)"
-$options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
-
-$title = "Autopilot Hash upload" 
-$message = "Do you want to upload this device's hash to Autopilot?"
-$result = $host.ui.PromptForChoice($title, $message, $options, 1)
-switch ($result) {
-  0{
-    #Answer Yes
-    Write-Host "OSDCloud build automation with Autopilot enrolment" -ForegroundColor Cyan
-    MgGraph-Authentication
-  }1{
-    #Answer No
-    Write-Host "OSDCloud build automation - Windows reinstall only." -ForegroundColor Cyan
-    Start-OSD
-    }
-}
 
 function MgGraph-Authentication {
  
@@ -257,4 +239,22 @@ function Start-OSD {
 }
  
  
+$yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes","Upload the device's hash to AutoPilot. (Device is not in Autopilot devices)"
+$no = New-Object System.Management.Automation.Host.ChoiceDescription "&No","Skip Autopilot hash upload and just reinstall Windows. (Device is already in Autopilot devices)"
+$options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
+
+$title = "Autopilot Hash upload" 
+$message = "Do you want to upload this device's hash to Autopilot?"
+$result = $host.ui.PromptForChoice($title, $message, $options, 1)
+switch ($result) {
+  0{
+    #Answer Yes
+    Write-Host "OSDCloud build automation with Autopilot enrolment" -ForegroundColor Cyan
+    MgGraph-Authentication
+  }1{
+    #Answer No
+    Write-Host "OSDCloud build automation - Windows reinstall only." -ForegroundColor Cyan
+    Start-OSD
+    }
+}
 
