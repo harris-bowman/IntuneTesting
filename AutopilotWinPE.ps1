@@ -72,7 +72,7 @@ function IntuneDeviceCheck {
         $deviceName = Get-MgDeviceManagementManagedDevice | Where-Object serialNumber -eq "$serialNumber" | Select-Object -ExpandProperty deviceName
         Write-Host "Device is in Intune: $deviceName." -ForegroundColor Yellow
         Write-Host "This will be automatically removed in 5 seconds to prevent conflict during Autopilot." -ForegroundColor Yellow
-        sleep 5
+        Start-Sleep 5
         removeIntuneRecord
         }
     else {
@@ -238,12 +238,11 @@ function Start-OSD {
     wpeutil shutdown
 }
  
-$answer = Read-Host("Enter the word 'skip' to skip uploading the device's hash to Windows Autopilot and to instantly start rebuilding the device. Otherwise, press enter.")
-if ($answer = "skip") {
+$SkipAnswerInput = Read-Host("Enter the word 'skip' to skip uploading the device's hash to Windows Autopilot and to instantly start rebuilding the device. Otherwise, press enter.")
+if ($SkipAnswerInput -eq "skip") {
     Write-Host "OSDCloud build automation - Windows reinstall only." -ForegroundColor Cyan
     Start-OSD
 } else {
     Write-Host "OSDCloud build automation with Autopilot enrolment" -ForegroundColor Cyan
     MgGraph-Authentication
 }
-
