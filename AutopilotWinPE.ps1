@@ -238,23 +238,15 @@ function Start-OSD {
     wpeutil shutdown
 }
  
- 
-$yes = New-Object System.Management.Automation.Host.ChoiceDescription "&Yes","Upload the device's hash to AutoPilot. (Device is not in Autopilot devices)"
-$no = New-Object System.Management.Automation.Host.ChoiceDescription "&No","Skip Autopilot hash upload and just reinstall Windows. (Device is already in Autopilot devices)"
-$options = [System.Management.Automation.Host.ChoiceDescription[]]($yes, $no)
-
-$title = "Autopilot Hash upload" 
-$message = "Do you want to upload this device's hash to Autopilot?"
-$result = $host.ui.PromptForChoice($title, $message, $options, 1)
-switch ($result) {
-  0{
-    #Answer Yes
-    Write-Host "OSDCloud build automation with Autopilot enrolment" -ForegroundColor Cyan
-    MgGraph-Authentication
-  }1{
-    #Answer No
+$answer = Read-Host("Enter the word 'skip' to skip uploading the device's hash to Windows Autopilot and to instantly start rebuilding the device. Otherwise, press enter.")
+if ($answer = "skip") {
     Write-Host "OSDCloud build automation - Windows reinstall only." -ForegroundColor Cyan
     Start-OSD
-    }
+} elseif ($answer = "Skip") {
+    Write-Host "OSDCloud build automation - Windows reinstall only." -ForegroundColor Cyan
+    Start-OSD
+} else {
+    Write-Host "OSDCloud build automation with Autopilot enrolment" -ForegroundColor Cyan
+    MgGraph-Authentication
 }
 
