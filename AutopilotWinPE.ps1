@@ -13,8 +13,8 @@ function MgGraph-Authentication {
         Write-Host "#######################################################################`n" -ForegroundColor Green
         
         Set-ExecutionPolicy RemoteSigned -Force
-        Install-Module PowershellGet -Force
-        Install-Module Microsoft.Graph -Force
+        Install-Module PowershellGet -Force -SkipPublisherCheck
+        Install-Module Microsoft.Graph -Force -SkipPublisherCheck
         Connect-MgGraph -UseDeviceCode -NoWelcome
         Write-Host "Connected successfuly" -ForegroundColor Green
         downloadPreReqs
